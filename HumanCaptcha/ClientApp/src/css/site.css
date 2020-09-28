@@ -1,0 +1,13 @@
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #E01A76;
+}
+.btn-refresh {
+    background: url(../images/refresh.png) no-repeat 50% 50% #24a0ed;
+    background-size: 28px 28px;
+    width: 32px;
+    height: 32px;
+}
