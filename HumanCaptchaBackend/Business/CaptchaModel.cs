@@ -11,6 +11,9 @@ using HumanCaptchaBackend.Services;
 
 namespace HumanCaptchaBackend.Business
 {
+    /// <summary>
+    /// Human Captcha model
+    /// </summary>
     public class CaptchaModel
     {
         private readonly HumanCaptchaContext context;
@@ -23,16 +26,32 @@ namespace HumanCaptchaBackend.Business
             this.exceptionManager = _exceptionManager;
         }
 
+        /// <summary>
+        /// generate captcha image
+        /// </summary>
+        /// <param name="size">alphanumeric length of the captcha</param>
+        /// <returns>image properties and image binary data</returns>
         public async Task<CaptchaImage> GenerateCaptcha(int size)
         {
             return await generateCaptcha(size);
         }
 
-        public async Task<ResultItem> CheckCaptcha(Guid imageid, string value)
+        /// <summary>
+        /// verify captcha value
+        /// </summary>
+        /// <param name="imageid">id of the captcha image</param>
+        /// <param name="value">user entered value</param>
+        /// <returns>result and the Token</returns>
+        public async Task<ResultItem> VerifyCaptcha(Guid imageid, string value)
         {
-            return await checkCaptcha(imageid, value);
+            return await verifyCaptcha(imageid, value);
         }
 
+        /// <summary>
+        /// generate captcha image
+        /// </summary>
+        /// <param name="size">alphanumeric length of the captcha</param>
+        /// <returns>image properties and image binary data</returns>
         private async Task<CaptchaImage> generateCaptcha(int size)
         {
             try
@@ -42,21 +61,25 @@ namespace HumanCaptchaBackend.Business
                 var b = new Bitmap(width, height);
                 var g = Graphics.FromImage(b);
 
+                //create brush and rectangle
                 var brush = new HatchBrush(HatchStyle.SmallConfetti, Color.LightSteelBlue, Color.White);
                 g.FillRectangle(brush, 0, 0, b.Width, b.Height);
                 float emSize = width / size;
                 var fnt = new Font("Arial", emSize, FontStyle.Italic);
 
+                // generate truly random captcha value
                 string value = generateRandomCaptchaValue(size);
                 while (string.IsNullOrEmpty(value))
                     value = generateRandomCaptchaValue(size);
 
+                // write the generated value on the image
                 g.DrawString(value, fnt, Brushes.Coral, 0, 0, StringFormat.GenericTypographic);
 
-                // random noise
+                // generate random noise on the image
                 brush = new HatchBrush(HatchStyle.LargeConfetti, Color.SlateBlue, Color.SlateGray);
                 fillRandomNoise(g, brush, width, height);
 
+                // draw random lines on the image
                 Point[] iP = getRandomPoints(width, height);
                 for (int i = 0; i < 3; i++)
                 {
@@ -86,7 +109,13 @@ namespace HumanCaptchaBackend.Business
             return null;
         }
 
-        private async Task<ResultItem> checkCaptcha(Guid imageid, string value)
+        /// <summary>
+        /// verify captcha value
+        /// </summary>
+        /// <param name="imageid">id of the captcha image</param>
+        /// <param name="value">user entered value</param>
+        /// <returns>result and the Token</returns>
+        private async Task<ResultItem> verifyCaptcha(Guid imageid, string value)
         {
             try
             {
@@ -106,6 +135,11 @@ namespace HumanCaptchaBackend.Business
             return new ResultItem() { Result = false, Token = string.Empty };
         }
 
+        /// <summary>
+        /// save captcha properties to database
+        /// </summary>
+        /// <param name="value">generated value</param>
+        /// <returns>guid of the saved data</returns>
         private async Task<Guid?> saveCaptcha(string value)
         {
             try
@@ -128,8 +162,11 @@ namespace HumanCaptchaBackend.Business
             return null;
         }
 
-
-
+        /// <summary>
+        /// generate truly random captcha values
+        /// </summary>
+        /// <param name="size">number of alpha-numeric characters to generate</param>
+        /// <returns>random value</returns>
         private string generateRandomCaptchaValue(int size)
         {
             var random = new Random(getSeed());
@@ -145,6 +182,13 @@ namespace HumanCaptchaBackend.Business
             return builder.ToString();
         }
 
+        /// <summary>
+        /// generate random noise on the image
+        /// </summary>
+        /// <param name="g">graphics</param>
+        /// <param name="hbrs">brush</param>
+        /// <param name="width">width of the image</param>
+        /// <param name="height">height of the image</param>
         private void fillRandomNoise(Graphics g, HatchBrush hbrs, int width, int height)
         {
             var random = new Random(getSeed());
@@ -159,6 +203,12 @@ namespace HumanCaptchaBackend.Business
             }
         }
 
+        /// <summary>
+        /// generate random points to draw lines on the image
+        /// </summary>
+        /// <param name="width">width of the image</param>
+        /// <param name="height">geight of the image</param>
+        /// <returns></returns>
         private Point[] getRandomPoints(int width, int height)
         {
             Point[] iP = new Point[12];
@@ -175,11 +225,17 @@ namespace HumanCaptchaBackend.Business
             return iP;
         }
 
-        private string randomString(int iLen, Random random)
+        /// <summary>
+        /// generate random string
+        /// </summary>
+        /// <param name="len">length</param>
+        /// <param name="random">random number generator</param>
+        /// <returns>random string</returns>
+        private string randomString(int len, Random random)
         {
             var builder = new StringBuilder();
             char ch;
-            for (int i = 0; i < iLen; i++)
+            for (int i = 0; i < len; i++)
             {
                 ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
                 builder.Append(ch);
@@ -187,14 +243,25 @@ namespace HumanCaptchaBackend.Business
             return builder.ToString();
         }
 
+        /// <summary>
+        /// generate random number
+        /// </summary>
+        /// <param name="iMin"></param>
+        /// <param name="iMax"></param>
+        /// <param name="random"></param>
+        /// <returns>random number</returns>
         private int randomNumber(int iMin, int iMax, Random random)
         {
             return random.Next(iMin, iMax + 1);
         }
 
+        /// <summary>
+        /// generate a seed for random number generator
+        /// </summary>
+        /// <returns>random number seed</returns>
         private int getSeed()
         {
-            DateTime dt = DateTime.Now;
+            var dt = DateTime.Now;
             long elapsedTicks = dt.Ticks;
             long let;
             Math.DivRem(elapsedTicks, (long)(elapsedTicks / 100000), out let);

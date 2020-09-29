@@ -38,6 +38,7 @@ class HumanCaptcha extends Component {
         const id = this.state.id;
         const value = this.state.value;
 
+        // update parent props
         this.validateCaptcha(id, value, () => {
             if (this.props.onChange && this.state.token) {
                 this.props.onChange(this.state.token);

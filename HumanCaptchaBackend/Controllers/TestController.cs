@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HumanCaptchaBackend.Controllers
 {
     /// <summary>
-    /// controller to test our not robot captcha
+    /// controller to test our human captcha
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]

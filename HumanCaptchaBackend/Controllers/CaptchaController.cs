@@ -4,7 +4,6 @@ using HumanCaptchaBackend.Models;
 using System.Threading.Tasks;
 using HumanCaptchaBackend.Data;
 using HumanCaptchaBackend.Services;
-using System;
 
 namespace HumanCaptchaBackend.Controllers
 {
@@ -32,7 +31,7 @@ namespace HumanCaptchaBackend.Controllers
         [HttpPost]
         public async Task<ResultItem> Post(ValidateItem item)
         {
-            return await model.CheckCaptcha(item.Id, item.Value);
+            return await model.VerifyCaptcha(item.Id, item.Value);
         }
     }
 }
