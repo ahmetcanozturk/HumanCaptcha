@@ -6,8 +6,9 @@ Human Captcha (Not Robot) reusable React Component with .Net Core WebApi back-en
 2. HumanCaptcha: React front-end including component and sample site
 
 ### HumanCaptchaBackend
-Generates a captcha image with truly random alpha-numeric values using System.Drawing and Drawing.Drawing2D namespace
-Validates the captcha against user input value and returns a authorization token to be used in front-end Forms
+- Generates a captcha image with truly random alpha-numeric values using System.Drawing and Drawing.Drawing2D namespace
+- Validates the captcha against user input value and returns a authorization token to be used in front-end Forms
+- Uses Sqlite to store generated image properties
 
 ### HumanCaptcha
 - Human Captcha component - HumanCaptcha.jsx - is under ./HumanCaptcha/ClientApp/src/components
